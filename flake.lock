@@ -1,37 +1,5 @@
 {
   "nodes": {
-    "dotacat": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1674819296,
-        "narHash": "sha256-y+u9PO01W+IzBatGHZpgOD7cRKjdeuy4/VX7/V9cu3Q=",
-        "ref": "refs/heads/master",
-        "rev": "f3b7e7816bed6b84123e066c57cf4003d77a85f1",
-        "revCount": 31,
-        "type": "git",
-        "url": "https://gitlab.scd31.com/stephen/dotacat.git"
-      },
-      "original": {
-        "type": "git",
-        "url": "https://gitlab.scd31.com/stephen/dotacat.git"
-      }
-    },
-    "fast-syntax-highlighting": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1702802089,
-        "narHash": "sha256-AEeGEx2vyyHVS92Nla7XoqSx3rTpQHYwPMrK1jFH1Mg=",
-        "owner": "z-shell",
-        "repo": "F-Sy-H",
-        "rev": "3dea11a9018061e6e3a77e529b79e5654679d3a0",
-        "type": "github"
-      },
-      "original": {
-        "owner": "z-shell",
-        "repo": "F-Sy-H",
-        "type": "github"
-      }
-    },
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -98,31 +66,28 @@
         "type": "github"
       }
     },
-    "powerlevel10k": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1716315999,
-        "narHash": "sha256-IA2pPW8WT/9/jz/+5zDwedkYz+rzyCy0DRnIvDh9zac=",
-        "owner": "romkatv",
-        "repo": "powerlevel10k",
-        "rev": "bde5ca4c2aa6e0c52dd7f15cf216dffdb1ec788c",
-        "type": "github"
-      },
-      "original": {
-        "owner": "romkatv",
-        "repo": "powerlevel10k",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
-        "dotacat": "dotacat",
-        "fast-syntax-highlighting": "fast-syntax-highlighting",
         "flake-utils": "flake-utils",
         "naersk": "naersk",
         "nixpkgs": "nixpkgs_2",
-        "powerlevel10k": "powerlevel10k",
-        "zsh-nix-shell": "zsh-nix-shell"
+        "starship": "starship"
+      }
+    },
+    "starship": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1718460725,
+        "narHash": "sha256-h2G5pcoEFBEcD4stLKgGiJctK7/1AxV1oU7tp9QECbE=",
+        "owner": "maix0",
+        "repo": "starship",
+        "rev": "0ac226775641df06e20f99dab705afef0b9b9d01",
+        "type": "github"
+      },
+      "original": {
+        "owner": "maix0",
+        "repo": "starship",
+        "type": "github"
       }
     },
     "systems": {
@@ -137,22 +102,6 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
-        "type": "github"
-      }
-    },
-    "zsh-nix-shell": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1704028593,
-        "narHash": "sha256-Rtg8kWVLhXRuD2/Ctbtgz9MQCtKZOLpAIdommZhXKdE=",
-        "owner": "chisui",
-        "repo": "zsh-nix-shell",
-        "rev": "82ca15e638cc208e6d8368e34a1625ed75e08f90",
-        "type": "github"
-      },
-      "original": {
-        "owner": "chisui",
-        "repo": "zsh-nix-shell",
         "type": "github"
       }
     }

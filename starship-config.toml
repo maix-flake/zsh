@@ -12,6 +12,9 @@ $character'''
 home_symbol = " ~"
 style = "bold fg:blue bg:#1e1e1e"
 format = "[$path]($style)[$read_only]($read_only_style)"
+truncate_to_repo = false
+truncation_length = 2
+fish_style_pwd_dir_length = 3
 
 [character]
 success_symbol = '[❯](fg:#00ff00)'
