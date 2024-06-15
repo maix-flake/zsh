@@ -25,7 +25,7 @@
         src = inputs.starship;
         buildInputs = [pkgs.cmake];
       };
-      starship_config = builtins.readFile ./starship_config.toml;
+      starship_config = builtins.readFile ./starship-config.toml;
       zshrc_data = ''
         [ -f "$HOME/.zshenv" ] && source "$HOME/.zshenv";
         [ -f "$HOME/.zvars"  ] && source "$HOME/.zvars";
@@ -72,6 +72,15 @@
         eval "$(direnv hook zsh)"
         eval "$(fzf --zsh)"
         eval "$(zoxide init --cmd cd zsh)"
+
+        enable_transience || true
+
+          ${pkgs.fortune}/bin/fortune \
+        | ${pkgs.cowsay}/bin/cowsay   \
+        | ${pkgs.dotacat}/bin/dotacat
+
+        alias -- 'cat'='${pkgs.bat}/bin/bat -p'
+        alias -- 'ls'='${pkgs.eza}/bin/eza --icons -a'
       '';
       zsh_config_file = pkgs.writeTextFile {
         name = ".zshrc";
@@ -85,7 +94,8 @@
         zsh =
           pkgs.writeScriptBin "zsh"
           ''
-            ZDOTDIR="${zsh_config_file}" ${pkgs.zsh} "$@"
+            #!/bin/sh
+            ZDOTDIR="${zsh_config_file}/" ${pkgs.zsh}/bin/zsh "$@"
           '';
       };
 
