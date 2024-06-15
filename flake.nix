@@ -91,12 +91,14 @@
       packages = rec {
         inherit starship;
         default = zsh;
-        zsh =
-          pkgs.writeScriptBin "zsh"
+        zsh = (pkgs.writeScriptBin "zsh"
           ''
             #!/bin/sh
             ZDOTDIR="${zsh_config_file}/" ${pkgs.zsh}/bin/zsh "$@"
-          '';
+          '')
+        .overrideAttrs {
+          passthru.shellPath = "/bin/zsh";
+        };
       };
 
       apps = rec {
