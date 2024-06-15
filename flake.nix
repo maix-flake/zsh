@@ -35,6 +35,8 @@
         [ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
         source "''${ZINIT_HOME}/zinit.zsh"
 
+        [ -f /etc/zshenv ] && source /etc/zshenv
+
         zinit light z-shell/F-Sy-H
         zinit light zsh-users/zsh-syntax-highlighting
         zinit light zsh-users/zsh-completions
@@ -45,8 +47,9 @@
         zinit snippet OMZP::git
         zinit snippet OMZP::sudo
 
-        autoload -Uz compinit && compinit
+        compdef batman=man
 
+        HISTSIZE=5000
         SAVEHIST=$HISTSIZE
         HISTDUP=erase
         setopt appendhistory
@@ -60,27 +63,45 @@
         zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
         zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
         zstyle ':completion:*' menu no
-        zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
-        zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
+        zstyle ':fzf-tab:complete:cd:*' fzf-preview '${pkgs.eza}/bin/eza -a --icons --color $realpath'
+        zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview '${pkgs.eza}/bin/eza -a --icons --color $realpath'
 
 
         export STARSHIP_CONFIG="${pkgs.writeTextFile {
           name = "starship-config.toml";
           text = starship_config;
         }}"
-        eval "$(${starship}/bin/starship init zsh)"
-        eval "$(direnv hook zsh)"
-        eval "$(fzf --zsh)"
-        eval "$(zoxide init --cmd cd zsh)"
 
-        enable_transience || true
 
           ${pkgs.fortune}/bin/fortune \
         | ${pkgs.cowsay}/bin/cowsay   \
         | ${pkgs.dotacat}/bin/dotacat
 
+
         alias -- 'cat'='${pkgs.bat}/bin/bat -p'
         alias -- 'ls'='${pkgs.eza}/bin/eza --icons -a'
+        alias -- 'll'='${pkgs.eza}/bin/eza --icons -a -l'
+
+        eval "$(${starship}/bin/starship init zsh)"
+        eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
+        # eval "$(${pkgs.fzf}/bin/fzf --zsh)"
+        eval "$(${pkgs.zoxide}/bin/zoxide init zsh)"
+
+        autoload -Uz compinit && compinit
+
+        preexec() {
+          cmd=$1
+          if [[ -n $cmd ]]; then
+            print -Pn "\e]0;$title_prefix$cmd\a"
+          fi
+        }
+
+        precmd() {
+          dir=$(pwd | sed "s:$HOME:~:")
+          print -Pn "\e]0;$(whoami)@$(hostname):$dir\a"
+        }
+
+        enable_transience || true
       '';
       zsh_config_file = pkgs.writeTextFile {
         name = ".zshrc";
@@ -91,13 +112,15 @@
       packages = rec {
         inherit starship;
         default = zsh;
-        zsh = (pkgs.writeScriptBin "zsh"
-          ''
-            #!/bin/sh
+        zsh = pkgs.writeShellApplication {
+          name = "zsh";
+          runtimeInputs = with pkgs; [fzf direnv zoxide] ++ [starship];
+          text = ''
             ZDOTDIR="${zsh_config_file}/" ${pkgs.zsh}/bin/zsh "$@"
-          '')
-        .overrideAttrs {
-          passthru.shellPath = "/bin/zsh";
+          '';
+          derivationArgs = {
+            passthru.shellPath = "/bin/zsh";
+          };
         };
       };
 
