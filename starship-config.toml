@@ -39,9 +39,10 @@ format = '[$state($progress_current/$progress_total)]($style)'
 
 [git_status]
 disabled = false
-ahead = '⇡${count}'
-diverged = '⇡${ahead_count}⇣${behind_count}'
-behind = '⇣${count}'
+ahead = '[⇡${count}](yellow bg:#1e1e1e)'
+diverged = '[[⇡${ahead_count}](yellow)(⇣${behind_count})[green]](bg:#1e1e1e)'
+behind = '[⇣${count}](green bg:#1e1e1e)'
+
 staged = '+${count} '
 modified = '!${count} '
 deleted = '-${count} '
