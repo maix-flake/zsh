@@ -49,6 +49,12 @@
 
         compdef batman=man
 
+        silent_background() {
+          setopt local_options no_notify no_monitor
+          "$@" &
+        }
+
+
         HISTSIZE=5000
         SAVEHIST=$HISTSIZE
         HISTDUP=erase
@@ -84,10 +90,12 @@
 
         eval "$(${starship}/bin/starship init zsh)"
         eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
-        # eval "$(${pkgs.fzf}/bin/fzf --zsh)"
+        eval "$(${pkgs.fzf}/bin/fzf --zsh)"
         eval "$(${pkgs.zoxide}/bin/zoxide init zsh)"
 
-        autoload -Uz compinit && compinit
+      
+
+        silent_background (autoload -Uz compinit && compinit)
 
         preexec() {
           cmd=$1
