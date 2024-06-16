@@ -54,6 +54,10 @@
           "$@" &
         }
 
+        compile_thingy()
+        {
+          autoload -Uz compinit '&&' compinit
+        }
 
         HISTSIZE=5000
         SAVEHIST=$HISTSIZE
@@ -93,9 +97,8 @@
         eval "$(${pkgs.fzf}/bin/fzf --zsh)"
         eval "$(${pkgs.zoxide}/bin/zoxide init zsh)"
 
-      
 
-        silent_background (autoload -Uz compinit && compinit)
+        silent_background compile_thingy
 
         preexec() {
           cmd=$1
