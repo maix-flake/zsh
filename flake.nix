@@ -37,38 +37,41 @@
 
         [ -f /etc/zshenv ] && source /etc/zshenv
 
-        zinit light z-shell/F-Sy-H
-        zinit light zsh-users/zsh-syntax-highlighting
-        zinit light zsh-users/zsh-completions
-        zinit light zsh-users/zsh-autosuggestions
-        zinit light Aloxaf/fzf-tab
-        zinit light nix-community/nix-zsh-completions
+        zinit ice wait lucid; zinit snippet OMZP::git
+        zinit ice wait lucid; zinit snippet OMZP::sudo
+        zinit ice wait lucid; zinit snippet OMZP::rust
 
-        zinit snippet OMZP::git
-        zinit snippet OMZP::sudo
+        zinit ice wait lucid; zinit light Aloxaf/fzf-tab
+        zinit ice wait lucid; zinit light nix-community/nix-zsh-completions
+        zinit ice wait lucid; zinit light z-shell/F-Sy-H
+        zinit ice wait lucid; zinit light zsh-users/zsh-autosuggestions
+        zinit ice wait lucid; zinit light zsh-users/zsh-completions
+        zinit ice wait lucid; zinit light zsh-users/zsh-syntax-highlighting
+        
+        bindkey '^[[A' history-search-backward
+        bindkey '^[[B' history-search-forward
 
-        compdef batman=man
+        bindkey '^[[1;5C' forward-word
+        bindkey '^[[1;5D' backward-word
+        bindkey '^[Oc' forward-word
+        bindkey '^[Od' backward-word
 
-        silent_background() {
-          setopt local_options no_notify no_monitor
-          "$@" &
-        }
-
-        compile_thingy()
-        {
-          autoload -Uz compinit '&&' compinit
-        }
+        bindkey '^[[1;2D' beginning-of-line
+        bindkey '^[[1;2C' end-of-line
 
         HISTSIZE=5000
         SAVEHIST=$HISTSIZE
+        
+        HISTFILE="$HOME/.zsh_history"
+        mkdir -p "$(dirname "$HISTFILE")"
         HISTDUP=erase
-        setopt appendhistory
-        setopt sharehistory
-        setopt hist_ignore_space
-        setopt hist_ignore_all_dups
-        setopt hist_save_no_dups
-        setopt hist_ignore_dups
-        setopt hist_find_no_dups
+        setopt SHARE_HISTORY
+        setopt HIST_FCNTL_LOCK
+        setopt HIST_IGNORE_SPACE
+        setopt HIST_IGNORE_DUPS
+        setopt HIST_IGNORE_ALL_DUPS
+        unsetopt HIST_EXPIRE_DUPS_FIRST
+        unsetopt EXTENDED_HISTORY
 
         zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
         zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
@@ -81,7 +84,8 @@
           name = "starship-config.toml";
           text = starship_config;
         }}"
-
+        
+        zmodload zsh/zpty
 
           ${pkgs.fortune}/bin/fortune \
         | ${pkgs.cowsay}/bin/cowsay   \
@@ -92,13 +96,6 @@
         alias -- 'ls'='${pkgs.eza}/bin/eza --icons -a'
         alias -- 'll'='${pkgs.eza}/bin/eza --icons -a -l'
 
-        eval "$(${starship}/bin/starship init zsh)"
-        eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
-        eval "$(${pkgs.fzf}/bin/fzf --zsh)"
-        eval "$(${pkgs.zoxide}/bin/zoxide init zsh)"
-
-
-        silent_background compile_thingy
 
         preexec() {
           cmd=$1
@@ -112,7 +109,13 @@
           print -Pn "\e]0;$(whoami)@$(hostname):$dir\a"
         }
 
+        eval "$(${starship}/bin/starship init zsh)"
+        eval "$(${pkgs.zoxide}/bin/zoxide init zsh)"
+        eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
+        eval "$(${pkgs.fzf}/bin/fzf --zsh)"
+        
         enable_transience || true
+
       '';
       zsh_config_file = pkgs.writeTextFile {
         name = ".zshrc";
