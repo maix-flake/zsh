@@ -159,7 +159,7 @@
           name = "zsh";
           runtimeInputs = with pkgs; [fzf direnv zoxide] ++ [starship];
           text = ''
-            ZDOTDIR="${zsh_config_file}/" LANG=C.UTF-8 EDITOR=nvim ${pkgs.zsh}/bin/zsh "$@"
+            ZDOTDIR="${zsh_config_file}/" LANG=C.UTF-8 EDITOR=nvim exec ${pkgs.zsh}/bin/zsh "$@"
           '';
           derivationArgs = {
             passthru.shellPath = "/bin/zsh";
