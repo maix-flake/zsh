@@ -20,6 +20,20 @@
   } @ inputs:
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = import nixpkgs {inherit system;};
+      cowfile = pkgs.writeTextFile {
+        name = "cat.cow";
+        text = ''
+          $the_cow = <<EOC;
+                    $thoughts
+                     $thoughts
+                   /\\_/\\
+             _____/ o o \\
+            /~____  =-= /
+           (______)__m_m)
+          EOC
+        '';
+        destination = "/cat.cow";
+      };
       naersk' = pkgs.callPackage inputs.naersk {};
       starship = naersk'.buildPackage {
         src = inputs.starship;
@@ -30,24 +44,32 @@
         [ -f "$HOME/.zshenv" ] && source "$HOME/.zshenv";
         [ -f "$HOME/.zvars"  ] && source "$HOME/.zvars";
 
-        ZINIT_HOME="''${XDG_DATA_HOME:-''${HOME}/.local/share}/zinit/zinit.git"
+        export ZINIT_HOME="''${XDG_DATA_HOME:-''${HOME}/.cache/}/zinit/zinit.git"
+        export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+
         [ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
         [ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
         source "''${ZINIT_HOME}/zinit.zsh"
 
         [ -f /etc/zshenv ] && source /etc/zshenv
 
-        zinit ice wait lucid; zinit snippet OMZP::git
-        zinit ice wait lucid; zinit snippet OMZP::sudo
-        zinit ice wait lucid; zinit snippet OMZP::rust
+        mkdir -p "$HOME/.zfunc"
+        fpath+="$HOME/.zfunc"
+
+        [ ! -f "$HOME/.zfunc/_rustup" ] && { rustup completions zsh rustup |> "$HOME/.zfunc/_rustup" }
+        [ ! -f "$HOME/.zfunc/_cargo" ] && { rustup completions zsh cargo |> "$HOME/.zfunc/_cargo" }
+
 
         zinit ice wait lucid; zinit light Aloxaf/fzf-tab
         zinit ice wait lucid; zinit light nix-community/nix-zsh-completions
         zinit ice wait lucid; zinit light z-shell/F-Sy-H
         zinit ice wait lucid; zinit light zsh-users/zsh-autosuggestions
-        zinit ice wait lucid; zinit light zsh-users/zsh-completions
         zinit ice wait lucid; zinit light zsh-users/zsh-syntax-highlighting
-        
+
+        zinit ice wait lucid; zinit snippet OMZP::git
+        zinit ice wait lucid as'completions'; zinit snippet OMZP::sudo
+        zinit ice wait lucid as'completions'; zinit snippet OMZP::rust
+
         bindkey '^[[A' history-search-backward
         bindkey '^[[B' history-search-forward
 
@@ -61,7 +83,7 @@
 
         HISTSIZE=5000
         SAVEHIST=$HISTSIZE
-        
+
         HISTFILE="$HOME/.zsh_history"
         mkdir -p "$(dirname "$HISTFILE")"
         HISTDUP=erase
@@ -72,6 +94,13 @@
         setopt HIST_IGNORE_ALL_DUPS
         unsetopt HIST_EXPIRE_DUPS_FIRST
         unsetopt EXTENDED_HISTORY
+
+        zi for \
+          atload"zicompinit; zicdreplay" \
+          blockf \
+          lucid \
+          wait \
+        zsh-users/zsh-completions
 
         zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
         zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
@@ -84,11 +113,11 @@
           name = "starship-config.toml";
           text = starship_config;
         }}"
-        
+
         zmodload zsh/zpty
 
-          ${pkgs.fortune}/bin/fortune \
-        | ${pkgs.cowsay}/bin/cowsay   \
+          ${pkgs.fortune}/bin/fortune               \
+        | ${pkgs.cowsay}/bin/cowsay -f "${cowfile}/cat.cow" \
         | ${pkgs.dotacat}/bin/dotacat
 
 
@@ -113,7 +142,7 @@
         eval "$(${pkgs.zoxide}/bin/zoxide init zsh)"
         eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
         eval "$(${pkgs.fzf}/bin/fzf --zsh)"
-        
+
         enable_transience || true
 
       '';
@@ -130,7 +159,7 @@
           name = "zsh";
           runtimeInputs = with pkgs; [fzf direnv zoxide] ++ [starship];
           text = ''
-            ZDOTDIR="${zsh_config_file}/" ${pkgs.zsh}/bin/zsh "$@"
+            ZDOTDIR="${zsh_config_file}/" LANG=C.UTF-8 EDITOR=nvim ${pkgs.zsh}/bin/zsh "$@"
           '';
           derivationArgs = {
             passthru.shellPath = "/bin/zsh";
