@@ -81,6 +81,8 @@
         bindkey '^[[1;2D' beginning-of-line
         bindkey '^[[1;2C' end-of-line
 
+        bindkey '^H' backward-kill-word
+
         HISTSIZE=5000
         SAVEHIST=$HISTSIZE
 
