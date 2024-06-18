@@ -45,7 +45,8 @@
         [ -f "$HOME/.zvars"  ] && source "$HOME/.zvars";
 
         export ZINIT_HOME="''${XDG_DATA_HOME:-''${HOME}/.cache/}/zinit/zinit.git"
-        export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+        export MANPAGER="bat -l man -p"
+        export EDITOR=nvim
 
         [ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
         [ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
@@ -110,7 +111,6 @@
         zstyle ':fzf-tab:complete:cd:*' fzf-preview '${pkgs.eza}/bin/eza -a --icons --color $realpath'
         zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview '${pkgs.eza}/bin/eza -a --icons --color $realpath'
 
-
         export STARSHIP_CONFIG="${pkgs.writeTextFile {
           name = "starship-config.toml";
           text = starship_config;
@@ -161,7 +161,7 @@
           name = "zsh";
           runtimeInputs = with pkgs; [fzf direnv zoxide] ++ [starship];
           text = ''
-            ZDOTDIR="${zsh_config_file}/" LANG=C.UTF-8 EDITOR=nvim exec ${pkgs.zsh}/bin/zsh "$@"
+            ZDOTDIR="${zsh_config_file}/" LANG=C.UTF-8 exec ${pkgs.zsh}/bin/zsh "$@"
           '';
           derivationArgs = {
             passthru.shellPath = "/bin/zsh";
