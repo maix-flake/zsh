@@ -45,7 +45,7 @@
         [ -f "$HOME/.zvars"  ] && source "$HOME/.zvars";
 
         export ZINIT_HOME="''${XDG_DATA_HOME:-''${HOME}/.cache/}/zinit/zinit.git"
-        export MANPAGER="bat -l man -p"
+        export MANPAGER="bat -l man -p --paging=always"
         export EDITOR=nvim
 
         [ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
