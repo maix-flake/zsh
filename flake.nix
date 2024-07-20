@@ -83,8 +83,13 @@
 
         bindkey '^[[1;2D' beginning-of-line
         bindkey '^[[1;2C' end-of-line
+        bindkey '^[[1;3D' beginning-of-line
+        bindkey '^[[1;3C' end-of-line
 
         bindkey '^H' backward-kill-word
+
+
+        bindkey -r '^['
 
         HISTSIZE=5000
         SAVEHIST=$HISTSIZE
