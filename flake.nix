@@ -118,6 +118,13 @@
         zstyle ':fzf-tab:complete:cd:*' fzf-preview '${pkgs.eza}/bin/eza -a --icons --color $realpath'
         zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview '${pkgs.eza}/bin/eza -a --icons --color $realpath'
 
+        if test -n "$KITTY_INSTALLATION_DIR"; then
+          export KITTY_SHELL_INTEGRATION="enabled"
+          autoload -Uz -- "$KITTY_INSTALLATION_DIR"/shell-integration/zsh/kitty-integration
+          kitty-integration
+          unfunction kitty-integration
+        fi
+
         export STARSHIP_CONFIG="${pkgs.writeTextFile {
           name = "starship-config.toml";
           text = starship_config;
