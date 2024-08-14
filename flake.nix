@@ -58,6 +58,7 @@
         mkdir -p "$HOME/.zfunc"
         fpath+="$HOME/.zfunc"
         path+="${pkgs.comma}/bin/"
+        path+="${pkgs.zoxide}/bin/"
 
         [ ! -f "$HOME/.zfunc/_rustup" ] && { rustup completions zsh rustup |> "$HOME/.zfunc/_rustup" }
         [ ! -f "$HOME/.zfunc/_cargo" ] && { rustup completions zsh cargo |> "$HOME/.zfunc/_cargo" }
