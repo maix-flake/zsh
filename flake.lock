@@ -65,11 +65,11 @@
     "starship": {
       "flake": false,
       "locked": {
-        "lastModified": 1728562914,
-        "narHash": "sha256-rCrY7efqtIEx9vQioBq7HkGT/zXBct0MPwxx3RCX3Cs=",
+        "lastModified": 1733330962,
+        "narHash": "sha256-kDsXeO/pxQhgP5TtDdVxLYM2OsmH/6opIclHEudLaNY=",
         "owner": "maix0",
         "repo": "starship",
-        "rev": "cce47f5d3d6154f343db936a73b412e04942b704",
+        "rev": "d833c399a22db195a19b5d93e7270fcb4e021b4d",
         "type": "github"
       },
       "original": {
