@@ -54,7 +54,7 @@
         export ZSH_AUTOSUGGEST_STRATEGY=(completion history)
 
         [ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
-        [ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+        [ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME" --depth=1
         source "''${ZINIT_HOME}/zinit.zsh"
 
         [ -f /etc/zshenv ] && source /etc/zshenv
