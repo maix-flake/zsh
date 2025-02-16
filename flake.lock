@@ -40,11 +40,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1737632463,
-        "narHash": "sha256-38J9QfeGSej341ouwzqf77WIHAScihAKCt8PQJ+NH28=",
+        "lastModified": 1739580444,
+        "narHash": "sha256-+/bSz4EAVbqz8/HsIGLroF8aNaO8bLRL7WfACN+24g4=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "0aa475546ed21629c4f5bbf90e38c846a99ec9e9",
+        "rev": "8bb37161a0488b89830168b81c48aed11569cb93",
         "type": "github"
       },
       "original": {
@@ -65,11 +65,11 @@
     "starship": {
       "flake": false,
       "locked": {
-        "lastModified": 1733330962,
-        "narHash": "sha256-kDsXeO/pxQhgP5TtDdVxLYM2OsmH/6opIclHEudLaNY=",
+        "lastModified": 1739731410,
+        "narHash": "sha256-OQYOgi3g93JfnKDUdcXvgG5Ze/xB+BduHQqY88mlW8E=",
         "owner": "maix0",
         "repo": "starship",
-        "rev": "d833c399a22db195a19b5d93e7270fcb4e021b4d",
+        "rev": "972914dc0c9a799d115768c67d38d313dd5fe280",
         "type": "github"
       },
       "original": {
