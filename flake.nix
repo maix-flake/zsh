@@ -63,6 +63,8 @@
         fpath+="$HOME/.zfunc"
         path+="${pkgs.comma}/bin/"
         path+="${pkgs.zoxide}/bin/"
+        path+="${pkgs.fzf}/bin/"
+        path+="${starship}/bin/"
 
         [ ! -f "$HOME/.zfunc/_rustup" ] && { rustup completions zsh rustup |> "$HOME/.zfunc/_rustup" }
         [ ! -f "$HOME/.zfunc/_cargo" ] && { rustup completions zsh cargo |> "$HOME/.zfunc/_cargo" }
@@ -90,6 +92,8 @@
         bindkey '^[[1;2C' end-of-line
         bindkey '^[[1;3D' beginning-of-line
         bindkey '^[[1;3C' end-of-line
+        bindkey '^A' beginning-of-line
+        bindkey '^E' end-of-line
 
         bindkey '^H' backward-kill-word
 
@@ -145,6 +149,7 @@
         alias -- 'cat'='${pkgs.bat}/bin/bat -p'
         alias -- 'ls'='${pkgs.eza}/bin/eza --icons -a'
         alias -- 'll'='${pkgs.eza}/bin/eza --icons -a -l'
+        alias -- 'cdtemp'='cd "$(mktemp -d)"'
 
 
         preexec() {
