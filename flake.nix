@@ -3,16 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    naersk = {
-      url = "github:nix-community/naersk";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     flake-utils.url = "github:numtide/flake-utils";
-
-    starship = {
-      url = "github:maix0/starship";
-      flake = false;
-    };
   };
 
   outputs = {
@@ -37,11 +28,7 @@
         '';
         destination = "/cat.cow";
       };
-      naersk' = pkgs.callPackage inputs.naersk {};
-      starship = naersk'.buildPackage {
-        src = inputs.starship;
-        buildInputs = [pkgs.cmake];
-      };
+      starship = pkgs.starship;
       starship_config = builtins.readFile ./starship-config.toml;
       zshrc_data = ''
         [ -f "$HOME/.zshenv" ] && source "$HOME/.zshenv";
@@ -169,8 +156,11 @@
         eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
         eval "$(${pkgs.fzf}/bin/fzf --zsh)"
 
-        enable_transience || true
+        TRANSIENT_PROMPT_PROMPT='$(${starship}/bin/starship prompt --terminal-width="$COLUMNS" --keymap="$${KEYMAP:-}" --status="$STARSHIP_CMD_STATUS" --pipestatus="$${STARSHIP_PIPE_STATUS[*]}" --cmd-duration="$${STARSHIP_DURATION:-}" --jobs="$STARSHIP_JOBS_COUNT")'
+        TRANSIENT_PROMPT_RPROMPT='$(${starship}/bin/starship prompt --right --terminal-width="$COLUMNS" --keymap="$${KEYMAP:-}" --status="$STARSHIP_CMD_STATUS" --pipestatus="$${STARSHIP_PIPE_STATUS[*]}" --cmd-duration="$${STARSHIP_DURATION:-}" --jobs="$STARSHIP_JOBS_COUNT")'
+        TRANSIENT_PROMPT_TRANSIENT_PROMPT='$(${starship}/bin/starship module character)'
 
+        zinit ice wait lucid; zinit light olets/zsh-transient-prompt
       '';
       zsh_config_file = pkgs.writeTextFile {
         name = ".zshrc";
