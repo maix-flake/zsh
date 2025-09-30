@@ -28,7 +28,6 @@
         '';
         destination = "/cat.cow";
       };
-      starship = pkgs.starship;
       starship_config = builtins.readFile ./starship-config.toml;
       zshrc_data = ''
         [ -f "$HOME/.zshenv" ] && source "$HOME/.zshenv";
@@ -39,6 +38,10 @@
         export MANROFFOPT="-c"
         export EDITOR=nvim
         export ZSH_AUTOSUGGEST_STRATEGY=(completion history)
+        export HISTORY_SUBSTRING_SEARCH_PREFIXED=1;
+        export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1;
+        export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=default;
+        export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND=default;
 
         [ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
         [ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME" --depth=1
@@ -51,7 +54,7 @@
         path+="${pkgs.comma}/bin/"
         path+="${pkgs.zoxide}/bin/"
         path+="${pkgs.fzf}/bin/"
-        path+="${starship}/bin/"
+        path+="${pkgs.starship}/bin/"
 
         [ ! -f "$HOME/.zfunc/_rustup" ] && { rustup completions zsh rustup |> "$HOME/.zfunc/_rustup" }
         [ ! -f "$HOME/.zfunc/_cargo" ] && { rustup completions zsh cargo |> "$HOME/.zfunc/_cargo" }
@@ -67,8 +70,14 @@
         zinit ice wait lucid as'completions'; zinit snippet OMZP::sudo
         zinit ice wait lucid as'completions'; zinit snippet OMZP::rust
 
-        bindkey '^[[A' history-search-backward
-        bindkey '^[[B' history-search-forward
+        zinit load 'zsh-users/zsh-history-substring-search'
+        zinit ice wait atload'_history_substring_search_config'
+
+        bindkey '^[[A' history-substring-search-up
+        bindkey '^[[B' history-substring-search-down
+
+        bindkey '^[OA' history-substring-search-up
+        bindkey '^[OB' history-substring-search-down
 
         bindkey '^[[1;5C' forward-word
         bindkey '^[[1;5D' backward-word
@@ -151,14 +160,14 @@
           print -Pn "\e]0;$(whoami)@$(hostname):$dir\a"
         }
 
-        eval "$(${starship}/bin/starship init zsh)"
+        eval "$(${pkgs.starship}/bin/starship init zsh)"
         eval "$(${pkgs.zoxide}/bin/zoxide init zsh)"
         eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
         eval "$(${pkgs.fzf}/bin/fzf --zsh)"
 
-        TRANSIENT_PROMPT_PROMPT='$(${starship}/bin/starship prompt --terminal-width="$COLUMNS" --keymap="$${KEYMAP:-}" --status="$STARSHIP_CMD_STATUS" --pipestatus="$${STARSHIP_PIPE_STATUS[*]}" --cmd-duration="$${STARSHIP_DURATION:-}" --jobs="$STARSHIP_JOBS_COUNT")'
-        TRANSIENT_PROMPT_RPROMPT='$(${starship}/bin/starship prompt --right --terminal-width="$COLUMNS" --keymap="$${KEYMAP:-}" --status="$STARSHIP_CMD_STATUS" --pipestatus="$${STARSHIP_PIPE_STATUS[*]}" --cmd-duration="$${STARSHIP_DURATION:-}" --jobs="$STARSHIP_JOBS_COUNT")'
-        TRANSIENT_PROMPT_TRANSIENT_PROMPT='$(${starship}/bin/starship module character)'
+        TRANSIENT_PROMPT_PROMPT='$(${pkgs.starship}/bin/starship prompt --terminal-width="$COLUMNS" --keymap="$${KEYMAP:-}" --status="$STARSHIP_CMD_STATUS" --pipestatus="$${STARSHIP_PIPE_STATUS[*]}" --cmd-duration="$${STARSHIP_DURATION:-}" --jobs="$STARSHIP_JOBS_COUNT")'
+        TRANSIENT_PROMPT_RPROMPT='$(${pkgs.starship}/bin/starship prompt --right --terminal-width="$COLUMNS" --keymap="$${KEYMAP:-}" --status="$STARSHIP_CMD_STATUS" --pipestatus="$${STARSHIP_PIPE_STATUS[*]}" --cmd-duration="$${STARSHIP_DURATION:-}" --jobs="$STARSHIP_JOBS_COUNT")'
+        TRANSIENT_PROMPT_TRANSIENT_PROMPT='$(${pkgs.starship}/bin/starship module character)'
 
         zinit ice wait lucid; zinit light olets/zsh-transient-prompt
       '';
@@ -169,11 +178,10 @@
       };
     in {
       packages = rec {
-        inherit starship;
         default = zsh;
         zsh = pkgs.writeShellApplication {
           name = "zsh";
-          runtimeInputs = with pkgs; [fzf direnv zoxide] ++ [starship];
+          runtimeInputs = with pkgs; [fzf direnv zoxide starship];
           text = ''
             ZDOTDIR="${zsh_config_file}/" LANG=C.UTF-8 exec ${pkgs.zsh}/bin/zsh "$@"
           '';
@@ -190,60 +198,5 @@
           drv = self.packages.${system}.zsh;
         };
       };
-      #   home.packages = [pkgs.nix-zsh-completions];
-      #   programs = {
-      #     nix-index = {
-      #       enable = true;
-      #       enableZshIntegration = true;
-      #     };
-      #     zsh = {
-      #       enable = true;
-      #       enableCompletion = true;
-      #       oh-my-zsh = {
-      #         enable = true;
-      #         plugins = ["git" "wd" "rust"];
-      #       };
-      #       plugins = [
-      #         {
-      #           name = "F-Sy-H";
-      #           file = "F-Sy-H.plugin.zsh";
-      #           src = inputs.fast-syntax-highlighting;
-      #         }
-      #         {
-      #           name = "zsh-nix-shell";
-      #           file = "nix-shell.plugin.zsh";
-      #           src = inputs.zsh-nix-shell;
-      #         }
-      #       ];
-      #       initExtra = ''
-      #         export PATH="$PATH:$HOME/bin"
-      #         source ~/.p10k.zsh
-      #         source ~/.powerlevel10k/powerlevel10k.zsh-theme
-      #         if [ -f "$HOME/.zvars" ]; then
-      #           source "$HOME/.zvars"
-      #         fi
-      #
-      #         if [ -f "$HOME/.localrc.sh" ]; then
-      #           source "$HOME/.localrc.sh"
-      #         fi
-      #
-      #         export PATH="${config.home.homeDirectory}/bin:$PATH"
-      #
-      #         ${pkgs.fortune}/bin/fortune \
-      #           | ${pkgs.cowsay}/bin/cowsay \
-      #           | ${pkgs.dotacat}/bin/dotacat
-      #       '';
-      #       shellAliases = {
-      #         cat = "${pkgs.bat}/bin/bat -p";
-      #         ls = "${pkgs.exa}/bin/exa --icons -a";
-      #         vim = "nvim";
-      #       };
-      #     };
-      #   };
-      #
-      #   home.file = {
-      #     ".zprofile".source = ./zprofile;
-      #   };
-      # };
     });
 }
