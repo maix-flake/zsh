@@ -160,6 +160,8 @@
           print -Pn "\e]0;$(whoami)@$(hostname):$dir\a"
         }
 
+        zinit ice wait lucid; zinit light olets/zsh-transient-prompt
+        
         eval "$(${pkgs.starship}/bin/starship init zsh)"
         eval "$(${pkgs.zoxide}/bin/zoxide init zsh)"
         eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
@@ -169,7 +171,6 @@
         TRANSIENT_PROMPT_RPROMPT='$(${pkgs.starship}/bin/starship prompt --right --terminal-width="$COLUMNS" --keymap="${"$"}{KEYMAP:-}" --status="$STARSHIP_CMD_STATUS" --pipestatus="${"$"}{STARSHIP_PIPE_STATUS[*]}" --cmd-duration="${"$"}{STARSHIP_DURATION:-}" --jobs="$STARSHIP_JOBS_COUNT")'
         TRANSIENT_PROMPT_TRANSIENT_PROMPT='$(${pkgs.starship}/bin/starship module character)'
 
-        zinit ice wait lucid; zinit light olets/zsh-transient-prompt
       '';
       zsh_config_file = pkgs.writeTextFile {
         name = ".zshrc";
